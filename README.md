@@ -1,2 +1,14 @@
-# Daily Task Demo is a Laravel 5.2 project
-## View, Create New, Update, and Delete
+# Daily Task Project
+@c2016
+Pao Im
+paoim@yahoo.com
+
+## Laravel Features:
+- Route used with controller
+- COntrollers
+- Model and Migrations
+- View with blade template
+
+## Project Features:
+- User Authentication
+- CRUD Project, Task, Project Status, and Task Status
