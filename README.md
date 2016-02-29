@@ -1,11 +1,13 @@
 # Daily Task Project
 @c2016
+
 Pao Im
+
 paoim@yahoo.com
 
 ## Laravel Features:
-- Route used with controller
-- COntrollers
+- Route used with controllers
+- Controllers
 - Model and Migrations
 - View with blade template
 
