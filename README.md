@@ -1,9 +1,7 @@
 # Daily Task Project
-@c2016
-
-Pao Im
-
-paoim@yahoo.com
+- @c2016
+- Pao Im
+- paoim@yahoo.com
 
 ## Laravel Features:
 - Route used with controllers
