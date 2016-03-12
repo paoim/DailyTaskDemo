@@ -2,23 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Project;
-use App\ProjectStatus;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Repositories\ProjectRepository;
+use App\Repositories\ProjectStatusRepository;
 
 class ProjectController extends Controller
 {
-	public function __construct()
+	protected $project;
+	protected $projectStatus;
+	
+	public function __construct(ProjectRepository $project, ProjectStatusRepository $projectStatus)
 	{
 		//$this->middleware( 'auth' );
+		$this->project = $project;
+		$this->projectStatus = $projectStatus;
 	}
 	public function show($id = null)
 	{
-		$project = $id ? Project::findOrNew($id) : null;
+		$project = $id ? $this->project->get($id) : null;
 		return view('project', [
-				'projects'				=> Project::orderBy('updated_at', 'desc')->get(),
-				'projectStatusList'		=> ProjectStatus::orderBy('created_at', 'asc')->get(),
+				'projects'				=> $this->project->getAll(),
+				'projectStatusList'		=> $this->projectStatus->getAll(),
 				'statusOptions'			=> $this->_getStatusOptions(),
 				'project'				=> $project
 		]);
@@ -28,8 +33,7 @@ class ProjectController extends Controller
 	{
 		$this->_validateForm($request);
 		
-		$project = new Project;
-		$this->_upsert($request, $project);
+		$this->project->upsert($request);
 		
 		return redirect( '/' );
 	}
@@ -38,33 +42,16 @@ class ProjectController extends Controller
 	{
 		$this->_validateForm($request);
 		
-		$project = Project::findOrNew($id);
-		$this->_upsert($request, $project);
+		$this->project->upsert($request, $id);
 		
 		return redirect( '/' );
 	}
 	
 	public function delete($id)
 	{
-		$project = Project::findOrNew($id);
-		if ($project) {
-			$project->delete();
-		}
+		$this->project->delete($id);
 		
 		return redirect( '/' );
-	}
-	
-	private function _upsert(Request $request, Project $project)
-	{
-		if ($project) {
-			$project->name = $request->name;
-			$project->description = $request->description;
-			$project->project_status_id = $request->project_status_id;
-			$project->closed_at = $request->closed_at;
-			$project->started_at = $request->started_at;
-			$project->ended_at = $request->ended_at;
-			$project->save();
-		}
 	}
 	
 	private function _validateForm(Request $request)
@@ -82,7 +69,7 @@ class ProjectController extends Controller
 	private function _getStatusOptions()
 	{
 		$statusOptions = [];
-		$ProjectStatusList = ProjectStatus::orderBy('created_at', 'asc')->get();
+		$ProjectStatusList = $this->projectStatus->getAll();
 		foreach ($ProjectStatusList as $ProjectStatus) {
 			if ($ProjectStatus->id) {
 				$statusOptions[$ProjectStatus->id] = $ProjectStatus->name;
