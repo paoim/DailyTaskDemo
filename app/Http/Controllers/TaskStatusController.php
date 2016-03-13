@@ -4,31 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\TaskStatus;
+use App\Repositories\TaskStatusRepository;
 
 class TaskStatusController extends Controller
 {
-	public function __construct()
+	protected $taskStatus;
+	
+	public function __construct(TaskStatusRepository $taskStatus)
 	{
 		//$this->middleware( 'auth' );
+		$this->taskStatus = $taskStatus;
 	}
 	
 	public function show($id = null)
 	{
-		$taskStatus = $id ? TaskStatus::findOrNew($id) : null;
+		$taskStatus = $id ? $this->taskStatus->get($id) : null;
 		return view('taskStatus', [
-				'taskStatusList'	=> TaskStatus::orderBy('updated_at', 'desc')->get(),
-				'options'			=> $this->_getOptions(),
-				'taskStatus'		=> $taskStatus
+				'taskStatus'		=> $taskStatus,
+				'taskStatusList'	=> $this->taskStatus->getAll(),
+				'options'			=> $this->taskStatus->getOptions()
 		]);
 	}
 	
 	public function addNew(Request $request)
 	{
 		$this->_validateForm($request);
-		
-		$taskStatus = new TaskStatus();
-		$this->_upsert($request, $taskStatus);
+		$this->taskStatus->upsert($request);
 		
 		return redirect( '/taskStatus' );
 	}
@@ -36,30 +37,16 @@ class TaskStatusController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->_validateForm($request);
-		
-		$taskStatus = TaskStatus::findOrNew($id);
-		$this->_upsert($request, $taskStatus);
+		$this->taskStatus->upsert($request, $id);
 		
 		return redirect( '/taskStatus' );
 	}
 	
 	public function delete($id)
 	{
-		$taskStatus = TaskStatus::findOrNew($id);
-		if ($taskStatus) {
-			$taskStatus->delete();
-		}
+		$this->taskStatus->delete($id);
 		
 		return redirect( '/taskStatus' );
-	}
-	
-	private function _upsert(Request $request, TaskStatus $taskStatus)
-	{
-		if ($taskStatus) {
-			$taskStatus->name = $request->name;
-			$taskStatus->active = $request->active;
-			$taskStatus->save();
-		}
 	}
 	
 	private function _validateForm(Request $request)
@@ -67,12 +54,6 @@ class TaskStatusController extends Controller
 		$this->validate( $request, [
 				'name'		=> 'required|max:255',
 				'active'	=> 'required'
-		] );
-	}
-	
-	private function _getOptions()
-	{
-		$options = ['0' => 'In-Active', '1' => 'active'];
-		return $options;
+		]);
 	}
 }

@@ -22,10 +22,10 @@ class ProjectController extends Controller
 	{
 		$project = $id ? $this->project->get($id) : null;
 		return view('project', [
+				'project'				=> $project,
 				'projects'				=> $this->project->getAll(),
-				'projectStatusList'		=> $this->projectStatus->getAll(),
-				'statusOptions'			=> $this->_getStatusOptions(),
-				'project'				=> $project
+				'projectStatusList'		=> $this->projectStatus->getProjectStatusList(),
+				'statusOptions'			=> $this->projectStatus->getProjectStatusOptions()
 		]);
 	}
 	
@@ -64,17 +64,5 @@ class ProjectController extends Controller
 				//'started_at'			=> 'required',
 				//'ended_at'				=> 'required'
 		] );
-	}
-	
-	private function _getStatusOptions()
-	{
-		$statusOptions = [];
-		$ProjectStatusList = $this->projectStatus->getAll();
-		foreach ($ProjectStatusList as $ProjectStatus) {
-			if ($ProjectStatus->id) {
-				$statusOptions[$ProjectStatus->id] = $ProjectStatus->name;
-			}
-		}
-		return $statusOptions;
 	}
 }

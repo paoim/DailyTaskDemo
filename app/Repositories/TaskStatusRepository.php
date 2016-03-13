@@ -12,9 +12,19 @@ class TaskStatusRepository
 		return TaskStatus::findOrNew($id);
 	}
 	
-	public function getAll()
+	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
-		return TaskStatus::orderBy('created_at', 'asc')->get();
+		return TaskStatus::orderBy($field, $orderBy)->get();
+	}
+	
+	public function upsert(Request $request, $id = null)
+	{
+		$taskStatus = $id ? $this->get($id) : new TaskStatus();
+		if ($taskStatus) {
+			$taskStatus->name = $request->name;
+			$taskStatus->active = $request->active;
+			$taskStatus->save();
+		}
 	}
 	
 	public function create(Request $request)
@@ -47,5 +57,22 @@ class TaskStatusRepository
 	{
 		$options = ['0' => 'In-Active', '1' => 'active'];
 		return $options;
+	}
+	
+	public function getTaskStatusList()
+	{
+		return $this->getAll('created_at', 'asc');
+	}
+	
+	public function getStatusOptions()
+	{
+		$statusOptions = [];
+		$taskStatusList = $this->getTaskStatusList();
+		foreach ($taskStatusList as $taskStatus) {
+			if ($taskStatus->id) {
+				$statusOptions[$taskStatus->id] = $taskStatus->name;
+			}
+		}
+		return $statusOptions;
 	}
 }

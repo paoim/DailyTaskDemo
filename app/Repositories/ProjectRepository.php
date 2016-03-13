@@ -70,4 +70,21 @@ class ProjectRepository
 			$project->delete();
 		}
 	}
+	
+	public function getProjects()
+	{
+		return $this->getAll('created_at', 'asc');
+	}
+	
+	public function getProjectOptions()
+	{
+		$projectOptions = [];
+		$projects = $this->getProjects();
+		foreach ($projects as $project) {
+			if ($project->id) {
+				$projectOptions[$project->id] = $project->name;
+			}
+		}
+		return $projectOptions;
+	}
 }

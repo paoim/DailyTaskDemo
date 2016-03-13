@@ -16,25 +16,39 @@ class TaskRepository
 		return Task::findOrNew($id);
 	}
 	
-	public function getAll()
+	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
-		return Task::all();
+		//return Task::all();
 		//return Task::orderBy('created_at', 'asc')->get();
+		return Task::orderBy($field, $orderBy)->get();
 	}
 	
-	public function forUser(User $user)
+	public function forUser(User $user, $field = 'updated_at', $orderBy = 'desc')
 	{
-		return Task::where('user_id', $user->id)->orderBy('created_at', 'asc')->get();
+		return Task::where('user_id', $user->id)->orderBy($field, $orderBy)->get();
 	}
 	
-	public function forProject(Project $project)
+	public function forProject(Project $project, $field = 'updated_at', $orderBy = 'desc')
 	{
-		return Task::where('project_id', $project->id)->orderBy('created_at', 'asc')->get();
+		return Task::where('project_id', $project->id)->orderBy($field, $orderBy)->get();
 	}
 	
-	public function forTaskStatus(TaskStatus $taskStatus)
+	public function forTaskStatus(TaskStatus $taskStatus, $field = 'updated_at', $orderBy = 'desc')
 	{
-		return Task::where('task_status_id', $taskStatus->id)->orderBy('created_at', 'asc')->get();
+		return Task::where('task_status_id', $taskStatus->id)->orderBy($field, $orderBy)->get();
+	}
+	
+	public function upsert(Request $request, $id = null)
+	{
+		$task = $id ? $this->get($id) : new Task();
+		if ($task) {
+			$task->name = $request->name;
+			$task->description = $request->description;
+			$task->task_status_id = $request->task_status_id;
+			$task->project_id = $request->project_id;
+			$task->closed_at = $request->closed_at;
+			$request->user()->tasks()->save($task);
+		}
 	}
 	
 	public function create(Request $request)

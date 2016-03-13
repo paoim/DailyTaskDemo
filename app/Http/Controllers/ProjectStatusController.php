@@ -2,24 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\ProjectStatus;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Repositories\ProjectStatusRepository;
 
 class ProjectStatusController extends Controller
 {
-	public function __construct()
+	protected $projectStatus;
+	
+	public function __construct(ProjectStatusRepository $projectStatus)
 	{
 		//$this->middleware( 'auth' );
+		$this->projectStatus = $projectStatus;
 	}
 	
 	public function show($id = null)
 	{
-		$projectStatus = $id ? ProjectStatus::findOrNew($id) : null;
+		$projectStatus = $id ? $this->projectStatus->get($id) : null;
 		return view('projectStatus', [
-				'projectStatusList'		=> ProjectStatus::orderBy('updated_at', 'desc')->get(),
 				'projectStatus'			=> $projectStatus,
-				'options'				=> $this->_getOptions()
+				'projectStatusList'		=> $this->projectStatus->getAll(),
+				'options'				=> $this->projectStatus->getOptions()
 		]);
 	}
 	
@@ -27,8 +30,7 @@ class ProjectStatusController extends Controller
 	{
 		$this->_validateForm($request);
 		
-		$projectStatus = new ProjectStatus;
-		$this->_upsert($request, $projectStatus);
+		$this->projectStatus->upsert($request);
 		
 		return redirect( '/projectStatus' );
 	}
@@ -37,30 +39,16 @@ class ProjectStatusController extends Controller
 	{
 		$this->_validateForm($request);
 		
-		$projectStatus = ProjectStatus::findOrNew($id);
-		$this->_upsert($request, $projectStatus);
+		$this->projectStatus->upsert($request, $id);
 		
 		return redirect( '/projectStatus' );
 	}
 	
 	public function delete($id)
 	{
-		$projectStatus = ProjectStatus::findOrNew($id);
-		if ($projectStatus) {
-			$projectStatus->delete();
-		}
+		$this->projectStatus->delete($id);
 		
 		return redirect( '/projectStatus' );
-	}
-	
-	private function _upsert(Request $request, ProjectStatus $projectStatus)
-	{
-		if ($projectStatus) {
-			$projectStatus->name = $request->name;
-			$projectStatus->active = $request->active;
-			$projectStatus->abv = $request->abv;
-			$projectStatus->save();
-		}
 	}
 	
 	private function _validateForm(Request $request)
@@ -70,11 +58,5 @@ class ProjectStatusController extends Controller
 				'active'	=> 'required',
 				'abv'		=> 'required|max:15'
 		] );
-	}
-	
-	private function _getOptions()
-	{
-		$options = ['0' => 'In-Active', '1' => 'active'];
-		return $options;
 	}
 }
