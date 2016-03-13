@@ -12,3 +12,6 @@
 ## Project Features:
 - User Authentication
 - CRUD Project, Task, Project Status, and Task Status
+- Repository
+- Dependancy Injection
+
