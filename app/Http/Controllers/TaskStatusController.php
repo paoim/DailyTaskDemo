@@ -16,22 +16,30 @@ class TaskStatusController extends Controller
 		$this->taskStatus = $taskStatus;
 	}
 	
-	public function show($id = null)
+	public function index()
 	{
-		$taskStatus = $id ? $this->taskStatus->get($id) : null;
 		return view('taskStatus', [
-				'taskStatus'		=> $taskStatus,
-				'taskStatusList'	=> $this->taskStatus->getAll(),
+				'TaskStatusList'	=> $this->taskStatus->getAll(),
 				'options'			=> $this->taskStatus->getOptions()
 		]);
 	}
 	
-	public function addNew(Request $request)
+	public function create()
+	{
+		return view('layouts.taskStatus.create', ['options' => $this->taskStatus->getOptions()]);
+	}
+	
+	public function store(Request $request)
 	{
 		$this->_validateForm($request);
 		$this->taskStatus->upsert($request);
 		
 		return redirect( '/taskStatus' );
+	}
+	
+	public function show($id)
+	{
+		return view('layouts.taskStatus.detail', ['options' => $this->taskStatus->getOptions()])->with('TaskStatus', $this->taskStatus->get($id));
 	}
 	
 	public function update(Request $request, $id)
@@ -42,7 +50,12 @@ class TaskStatusController extends Controller
 		return redirect( '/taskStatus' );
 	}
 	
-	public function delete($id)
+	public function edit($id)
+	{
+		return view('layouts.taskStatus.edit', ['options' => $this->taskStatus->getOptions()])->with('TaskStatus', $this->taskStatus->get($id));
+	}
+	
+	public function destroy($id)
 	{
 		$this->taskStatus->delete($id);
 		

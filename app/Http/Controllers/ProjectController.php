@@ -18,24 +18,43 @@ class ProjectController extends Controller
 		$this->project = $project;
 		$this->projectStatus = $projectStatus;
 	}
-	public function show($id = null)
+	
+	public function index()
 	{
-		$project = $id ? $this->project->get($id) : null;
 		return view('project', [
-				'project'				=> $project,
-				'projects'				=> $this->project->getAll(),
-				'projectStatusList'		=> $this->projectStatus->getProjectStatusList(),
-				'statusOptions'			=> $this->projectStatus->getProjectStatusOptions()
+				'Projects'			=> $this->project->getAll(),
+				'statusOptions'		=> $this->projectStatus->getProjectStatusOptions()
 		]);
 	}
 	
-	public function addNew(Request $request)
+	public function create()
+	{
+		return view('layouts.project.create', ['ProjectStatusList' => $this->projectStatus->getProjectStatusList()]);
+	}
+	
+	public function store(Request $request)
 	{
 		$this->_validateForm($request);
 		
 		$this->project->upsert($request);
 		
 		return redirect( '/' );
+	}
+	
+	public function show($id)
+	{
+		return view('layouts.project.detail', [
+				'Project'			=> $this->project->get($id),
+				'statusOptions'		=> $this->projectStatus->getProjectStatusOptions()
+		]);
+	}
+	
+	public function edit($id)
+	{
+		return view('layouts.project.edit', [
+				'Project'				=> $this->project->get($id),
+				'ProjectStatusList'		=> $this->projectStatus->getProjectStatusList()
+		]);
 	}
 	
 	public function update(Request $request, $id)
@@ -47,7 +66,7 @@ class ProjectController extends Controller
 		return redirect( '/' );
 	}
 	
-	public function delete($id)
+	public function destroy($id)
 	{
 		$this->project->delete($id);
 		
