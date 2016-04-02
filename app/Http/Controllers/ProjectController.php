@@ -22,7 +22,7 @@ class ProjectController extends Controller
 	public function index()
 	{
 		return view('project', [
-				'Projects'			=> $this->project->getAll(),
+				'Projects'			=> $this->project->paginatePages(),
 				'statusOptions'		=> $this->projectStatus->getProjectStatusOptions()
 		]);
 	}

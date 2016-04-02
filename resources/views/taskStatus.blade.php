@@ -55,6 +55,11 @@ Task Status
 							@endif
 						</tbody>
 					</table>
+					@if (count($TaskStatusList) > 0)
+						<div class="col-md-6 col-md-offset-4">
+							{!! $TaskStatusList->links() !!}
+						</div>
+					@endif
 				</div>
 			</div>
 		</div>

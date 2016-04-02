@@ -12,6 +12,11 @@ class ProjectStatusRepository
 		return ProjectStatus::findOrNew($id);
 	}
 	
+	public function paginatePages($numberPerPage = 10)
+	{
+		return ProjectStatus::paginate($numberPerPage);
+	}
+	
 	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
 		return ProjectStatus::orderBy($field, $orderBy)->get();

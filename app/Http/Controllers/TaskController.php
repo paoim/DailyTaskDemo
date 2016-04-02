@@ -24,7 +24,7 @@ class TaskController extends Controller
 	
 	public function index(Request $request)
 	{
-		$tasks = $request->user() ? $this->task->forUser($request->user()) : $this->task->getAll();
+		$tasks = $request->user() ? $this->task->forUser($request->user()) : $this->task->paginatePages();
 		return view('task', [
 				'Tasks'				=> $tasks,
 				'projectOptions'	=> $this->project->getProjectOptions(),

@@ -16,6 +16,11 @@ class TaskRepository
 		return Task::findOrNew($id);
 	}
 	
+	public function paginatePages($numberPerPage = 2)
+	{
+		return Task::paginate($numberPerPage);
+	}
+	
 	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
 		//return Task::all();
@@ -23,9 +28,9 @@ class TaskRepository
 		return Task::orderBy($field, $orderBy)->get();
 	}
 	
-	public function forUser(User $user, $field = 'updated_at', $orderBy = 'desc')
+	public function forUser(User $user, $numberPerPage = 2, $field = 'updated_at', $orderBy = 'desc')
 	{
-		return Task::where('user_id', $user->id)->orderBy($field, $orderBy)->get();
+		return Task::where('user_id', $user->id)->orderBy($field, $orderBy)->paginate($numberPerPage);
 	}
 	
 	public function forProject(Project $project, $field = 'updated_at', $orderBy = 'desc')

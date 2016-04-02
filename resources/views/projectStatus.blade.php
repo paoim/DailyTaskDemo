@@ -56,6 +56,11 @@ Project Status
 							@endif
 						</tbody>
 					</table>
+					@if (count($ProjectStatusList) > 0)
+						<div class="col-md-6 col-md-offset-4">
+							{!! $ProjectStatusList->links() !!}
+						</div>
+					@endif
 				</div>
 			</div>
 		</div>

@@ -13,6 +13,11 @@ class ProjectRepository
 		return Project::findOrNew($id);
 	}
 	
+	public function paginatePages($numberPerPage = 2)
+	{
+		return Project::paginate($numberPerPage);
+	}
+	
 	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
 		return Project::orderBy($field, $orderBy)->get();

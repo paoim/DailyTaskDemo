@@ -19,8 +19,8 @@ class TaskStatusController extends Controller
 	public function index()
 	{
 		return view('taskStatus', [
-				'TaskStatusList'	=> $this->taskStatus->getAll(),
-				'options'			=> $this->taskStatus->getOptions()
+				'options'			=> $this->taskStatus->getOptions(),
+				'TaskStatusList'	=> $this->taskStatus->paginatePages()
 		]);
 	}
 	

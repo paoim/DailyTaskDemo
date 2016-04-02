@@ -60,6 +60,11 @@ Task
 							@endif
 						</tbody>
 					</table>
+					@if (count($Tasks) > 0)
+						<div class="col-md-6 col-md-offset-4">
+							{!! $Tasks->links() !!}
+						</div>
+					@endif
 				</div>
 			</div>
 		</div>

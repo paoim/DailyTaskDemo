@@ -19,8 +19,8 @@ class ProjectStatusController extends Controller
 	public function index()
 	{
 		return view('projectStatus', [
-				'ProjectStatusList'		=> $this->projectStatus->getAll(),
-				'options'				=> $this->projectStatus->getOptions()
+				'options'				=> $this->projectStatus->getOptions(),
+				'ProjectStatusList'		=> $this->projectStatus->paginatePages()
 		]);
 	}
 	

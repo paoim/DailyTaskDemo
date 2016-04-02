@@ -12,6 +12,11 @@ class TaskStatusRepository
 		return TaskStatus::findOrNew($id);
 	}
 	
+	public function paginatePages($numberPerPage = 10)
+	{
+		return TaskStatus::paginate($numberPerPage);
+	}
+	
 	public function getAll($field = 'updated_at', $orderBy = 'desc')
 	{
 		return TaskStatus::orderBy($field, $orderBy)->get();

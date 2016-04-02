@@ -62,6 +62,11 @@ Project
 							@endif
 						</tbody>
 					</table>
+					@if (count($Projects) > 0)
+						<div class="col-md-6 col-md-offset-4">
+							{!! $Projects->links() !!}
+						</div>
+					@endif
 				</div>
 			</div>
 		</div>
